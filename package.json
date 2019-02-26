@@ -1,0 +1,33 @@
+{
+  "name": "commensal-search-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint .",
+    "test": "mocha test/**/*.spec.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^5.3.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-react": "^7.11.0",
+    "chai": "*",
+    "chai-as-promised": "^7.1.1",
+    "sinon": "^7.2.3"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.382.0",
+    "commensal-common": "git://github.com/atyrian/commensal-common.git#develop",
+    "dynogels": "^9.0.0",
+    "joi": "^14.3.0",
+    "jsonwebtoken": "^8.5.0",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "es6-promise": "^4.2.5",
+    "isomorphic-fetch": "^2.2.1"
+  }
+}

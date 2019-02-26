@@ -1,0 +1,65 @@
+service: commensal-matching-service
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: eu-west-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - arn:aws:dynamodb:eu-west-1:959782623357:table/commensal-swipe
+        - arn:aws:dynamodb:eu-west-1:959782623357:table/commensal-match
+        - arn:aws:dynamodb:eu-west-1:959782623357:table/commensal-user
+        - arn:aws:dynamodb:eu-west-1:959782623357:table/commensal-user/index/geohash-time-index
+  environment:
+    REGION: ${self:provider.region}
+    SWIPE_TABLE: commensal-swipe
+    MATCH_TABLE: commensal-match
+    USER_TABLE: commensal-user
+    SCOPE_ID: ${self:custom.scope}
+    API_URL: https://29xroh6n1e.execute-api.eu-west-1.amazonaws.com/${self:provider.stage}
+
+package:
+  exclude:
+    - test/**
+
+custom:
+  scope: co_ss
+
+functions:
+  search:
+    handler: handler.search
+    events:
+      - http:
+          path: search/suggestusers/{id}
+          authorizer:
+            name: userAuthorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token 
+          method: get
+          cors: true # public facing API
+  swipe:
+    handler: handler.swipe
+    events:
+      - http:
+          path: swipe/{id}
+          authorizer:
+            name: userAuthorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token 
+          method: get
+          cors: true # public facing API
+  serviceAuthorizer:
+    handler: handler.serviceAuthorizer
+  userAuthorizer:
+    handler: handler.userAuthorizer
