@@ -14,11 +14,11 @@ module.exports = class SwipeHttpHandler {
     const dbHandler = new DatabaseHandler(params);
     const serviceToken = await generateToken();
     if (!params.like) {
-      await this.swipe(dbHandler, serviceToken, params);
+      this.swipe(dbHandler, serviceToken, params);
       return { body: JSON.stringify({ code: 200 }) };
     }
 
-    this.swipe(dbHandler, serviceToken, params);
+    await this.swipe(dbHandler, serviceToken, params);
     const isMatch = await this.isMatch(dbHandler, params, serviceToken);
 
     return { body: JSON.stringify({ match: isMatch, code: 200 }) };
