@@ -12,14 +12,14 @@ module.exports = class SwipeHttpHandler {
   async get() {
     const params = this._validateParameters();
     const dbHandler = new DatabaseHandler(params);
-
+    const serviceToken = await generateToken();
     if (!params.like) {
-      await this.negativeSwipe(dbHandler);
+      await this.swipe(dbHandler, serviceToken, params);
       return { body: JSON.stringify({ code: 200 }) };
     }
 
-    await this.positiveSwipe(dbHandler);
-    const isMatch = await this.isMatch(dbHandler, params);
+    this.swipe(dbHandler, serviceToken, params);
+    const isMatch = await this.isMatch(dbHandler, params, serviceToken);
 
     return { body: JSON.stringify({ match: isMatch, code: 200 }) };
   }
@@ -55,33 +55,39 @@ module.exports = class SwipeHttpHandler {
     };
   }
 
-  async negativeSwipe(handler) {
+  async swipe(handler, token, params) {
+    const updateShownToUrl = process.env.API_URL + `/user/${params.target_id}/partial`;
+    const body = { shown_to: params.base_id };
+    this.makeAPIRequest(updateShownToUrl, 'PUT', token, body);
+
     return handler.swipe();
   }
 
-  async positiveSwipe(handler) {
-    return handler.swipe();
-  }
-
-  async isMatch(handler, params) {
+  async isMatch(handler, params, serviceToken) {
     const targetLikesBase = await handler.findTargetSwipe();
     if (!targetLikesBase) {
       return targetLikesBase;
     }
+
+    /*
+    TODO: put match insert and user update in extrenal lambda
+    call with InvocationType 'event'(don't await response).
+     */
     const match = await handler.createMatch();
-    const serviceToken = await generateToken();
     const updateMatchUrl = process.env.API_URL + `/users/match?matchid=${match.match_id}&userid=${params.base_id}&userid=${params.target_id}`;
 
-    // Update both users matches property via user-service, don't wait for response.
-    fetch(updateMatchUrl, {
-      method: 'PUT',
+    this.makeAPIRequest(updateMatchUrl, 'PUT', serviceToken);
+    return match.isMatch;
+  }
+
+  async makeAPIRequest(url, method, token, body = {}) {
+    fetch(url, {
+      method,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `${serviceToken}`,
+        Authorization: `${token}`,
       },
-      body: JSON.stringify({}),
+      body: JSON.stringify(body),
     });
-
-    return match.isMatch;
   }
 };
