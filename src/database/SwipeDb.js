@@ -17,11 +17,19 @@ const Swipe = dynogels.define('Swipe', {
 });
 
 const create = data => new Promise((resolve, reject) => {
-  Swipe.create(data, (err) => {
-    if (err) {
-      reject(new common.errors.HttpError('Error saving Swipe to Database', 500));
+  Swipe.update(data, {
+    expected: {
+      base_id: { Exists: false },
+      target_id: { Exists: false }
+    },
+  }, (err) => {
+    if (err && err.code === 'ConditionalCheckFailedException') {
+      return reject(new common.errors.HttpError('Already swiped on user', 400));
     }
-    resolve(true);
+    if (err) {
+      return reject(new common.errors.HttpError('Error saving Swipe to Database', 500));
+    }
+    return resolve(true);
   });
 });
 
