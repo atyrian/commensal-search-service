@@ -17,7 +17,7 @@ describe('tests for SwipeHttpHandler', function () {
       queryStringParameters: { id: '2', like: '1' }
     };
     this.handler = new SwipeHttpHandler(this.event);
-    process.env.API_URL = 'https://29xroh6n1e.execute-api.eu-west-1.amazonaws.com/dev';
+    process.env.API_URL = 'well-known-API-url/dev';
   });
 
   afterEach(function () {
