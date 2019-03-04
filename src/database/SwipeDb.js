@@ -20,7 +20,7 @@ const create = data => new Promise((resolve, reject) => {
   Swipe.update(data, {
     expected: {
       base_id: { Exists: false },
-      target_id: { Exists: false }
+      target_id: { Exists: false },
     },
   }, (err) => {
     if (err && err.code === 'ConditionalCheckFailedException') {
