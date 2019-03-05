@@ -118,6 +118,7 @@ describe('tests for SwipeHttpHandler', function () {
       dbHandler = new DatabaseHandler(params);
       const dbHandlerTargetSwipe = sandbox.stub(dbHandler, 'findTargetSwipe').resolves(true);
       const dbHandlerMatchStub = sandbox.stub(dbHandler, 'createMatch').resolves({ isMatch: true, match_id: 'someId' });
+      const makeAPIRequestStub = sandbox.stub(this.handler, 'makeAPIRequest');
 
       return expect(this.handler.isMatch(dbHandler, params, 'sometoken'))
         .to.eventually.be.fulfilled
@@ -125,6 +126,7 @@ describe('tests for SwipeHttpHandler', function () {
           expect(data).to.be.equal(true);
           dbHandlerTargetSwipe.should.have.been.calledOnce;
           dbHandlerMatchStub.should.have.been.calledOnce;
+          makeAPIRequestStub.should.have.been.calledOnce;
         });
     });
 

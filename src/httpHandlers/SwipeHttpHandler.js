@@ -69,10 +69,10 @@ module.exports = class SwipeHttpHandler {
       return targetLikesBase;
     }
 
-    /*
-    TODO: put match insert and user update in extrenal lambda
-    call with InvocationType 'event'(don't await response).
-     */
+
+    // TODO: put match insert and user update in extrenal lambda
+    // call with InvocationType 'event'(don't await response).
+
     const match = await handler.createMatch();
     const updateMatchUrl = process.env.API_URL + `/users/match?matchid=${match.match_id}&userid=${params.base_id}&userid=${params.target_id}`;
 
