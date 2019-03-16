@@ -18,6 +18,10 @@ module.exports = class DatabaseHandler {
     const matchRecord = {
       messages: [],
       participants: [this.params.base_id, this.params.target_id],
+      connectionIds: {
+        [this.params.base_id]: ' ',
+        [this.params.target_id]: ' ',
+      },
     };
     return matchDB.create(matchRecord);
   }
