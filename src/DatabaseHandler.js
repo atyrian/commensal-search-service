@@ -1,5 +1,5 @@
 const swipeDB = require('./database/SwipeDb');
-const matchDB = require('./database/MatchDb');
+const MatchDB = require('./database/MatchDb');
 
 module.exports = class DatabaseHandler {
   constructor(params) {
@@ -15,6 +15,7 @@ module.exports = class DatabaseHandler {
   }
 
   async createMatch() {
+    const matchDB = new MatchDB([this.params.base_id, this.params.target_id]);
     const matchRecord = {
       messages: [],
       participants: [this.params.base_id, this.params.target_id],
